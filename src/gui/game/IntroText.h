@@ -45,36 +45,36 @@ inline ByteString IntroText()
 	sb << "\bl\bU" << APPNAME << "\bU - Version " << DISPLAY_VERSION[0] << "." << DISPLAY_VERSION[1] << " - https://powdertoy.co.uk, irc.libera.chat #powder, https://tpt.io/discord\n"
 	      "\n"
 	      "\n"
-	      "\bgPress \bo'F1'\bg to show or hide this text.\n"
+	      "\bg按\bo'F1'\bg 显示或隐藏本说明。\n"
 	      "\n"
-	      "\bgTo choose a material, hover over one of the icons on the right, it will show a selection of elements in that group.\n"
-	      "Pick your material from the menu using \bomouse left/right\bg buttons.\n"
-	      "Draw freeform lines by dragging your mouse left/right button across the drawing area.\n"
+	      "\bg选择材料：把鼠标移到右侧的分类图标上，即可展开该类别下的元素。\n"
+	      "\bg用\bo鼠标左/右键\bg从菜单中选取材料。\n"
+	      "\bg按住\bo鼠标左/右键\bg在绘图区拖拽，即可自由画出线条。\n"
 	      "\n"
-	      "Use the \bomouse scroll wheel\bg, or \bo'['\bg and \bo']'\bg, to change the tool size for particles. Press \boTab\bg to change the brush shape.\n"
-	      "\boMiddle click\bg or \boAlt+click\bg to \"sample\" the particles.\n"
-	      "\boCtrl+C/V/X\bg are copy, paste and cut respectively.\n"
-	      "When pasting, use \bo'R'\bg to rotate, \boShift+R\bg and \boShift+Ctrl+R\bg to mirror vertically or horizontally.\n"
-	      "\boShift+drag\bg will create straight lines of particles. \boShift+Alt+drag\bg for horizontal, vertical and diagonal lines.\n"
-	      "\boCtrl+drag\bg will result in filled rectangles. \boCtrl+Alt+drag\bg for filled squares. \boCtrl+Shift+click\bg will flood-fill a closed area.\n"
+	      "\bg用\bo鼠标滚轮\bg或\bo'['\bg、\bo']'\bg键改变粒子工具大小；按\boTab\bg切换笔刷形状。\n"
+	      "\bo鼠标中键\bg或\boAlt+单击\bg可取样粒子。\n"
+	      "\boCtrl+C/V/X\bg 分别为复制、粘贴与剪切。\n"
+	      "\bg粘贴时用\bo'R'\bg旋转，\boShift+R\bg 与 \boShift+Ctrl+R\bg 分别做垂直、水平镜像。\n"
+	      "\boShift+拖拽\bg可画直线粒子；\boShift+Alt+拖拽\bg可画水平、垂直与对角线。\n"
+	      "\boCtrl+拖拽\bg填充实心矩形，\boCtrl+Alt+拖拽\bg填充实心正方形；\boCtrl+Shift+单击\bg对封闭区域填充。\n"
 	      "\n"
-	      "\boSpacebar\bg can be used to pause physics. Use \bo'F'\bg to step ahead by one frame, \bo'F5'\bg to reload simulation.\n"
-	      "\boCtrl+Z\bg will act as undo, \boCtrl+Y\bg or \boCtrl+Shift+Z\bg as redo.\n"
-	      "Use \bo'S'\bg to save parts of the window as 'stamps'. \bo'L'\bg loads the most recent stamp, \bo'K'\bg shows a library of stamps you saved.\n"
+	      "\bo空格\bg可暂停物理模拟。用\bo'F'\bg逐帧前进，\bo'F5'\bg重新加载模拟。\n"
+	      "\boCtrl+Z\bg撤销，\boCtrl+Y\bg或\boCtrl+Shift+Z\bg重做。\n"
+	      "\bg用\bo'S'\bg把窗口的一部分保存为印章；\bo'L'\bg载入最近保存的印章；\bo'K'\bg打开印章库。\n"
 	      "\n"
-	      "Use \bo0-9\bg to select a view mode.\n"
-	      "Use \bo'H'\bg to toggle the HUD. Use \bo'D'\bg to toggle debug mode in the HUD.\n"
-	      "Use \bo'Z'\bg for a zoom tool. Click to make the drawable zoom window stay around. Use the wheel to change the zoom strength.\n"
-	      "Use \boCtrl+F\bg to highlight a selected element on the screen.\n"
+	      "\bg用\bo0-9\bg选择视图模式。\n"
+	      "\bg用\bo'H'\bg开关 HUD。用\bo'D'\bg在 HUD 中切换调试模式。\n"
+	      "\bg用\bo'Z'\bg放大镜：单击让放大窗口固定，用滚轮调整放大强度。\n"
+	      "\bg用\boCtrl+F\bg在屏幕上高亮指定的元素。\n"
 	      "\n";
 	if constexpr (BETA)
 	{
-		sb << "\brThis is a BETA, you cannot save things publicly, nor open local saves and stamps made with it in older versions.\n"
-		      "\brIf you are planning on publishing any saves, use the release version.\n";
+		sb << "\br这是测试版（BETA），无法公开保存，也无法在旧版本中打开本版制作的本地存档与印章。\n"
+		      "\br若要公开发布存档，请使用正式版本。\n";
 	}
 	else
 	{
-		sb << "\bgTo use online features such as saving, you need to register at: \br" << SERVER << "/Register.html\n";
+		sb << "\bg要使用在线功能（如保存存档），请先在 \br" << SERVER << "/Register.html \bg注册。\n";
 	}
 	sb << "\n\bt" << VersionInfo();
 	return sb.Build();

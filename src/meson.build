@@ -150,6 +150,8 @@ render_files = files(
 	'PowderToyRenderer.cpp',
 )
 
+powder_files += files('i18n.cpp')
+
 font_files = files(
 	'PowderToyFontEditor.cpp',
 	'PowderToySDL.cpp',

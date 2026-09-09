@@ -6,6 +6,7 @@
 #include "GameModel.h"
 #include "GameModelException.h"
 #include "GameView.h"
+#include "i18n.h"
 #include "Menu.h"
 #include "Notification.h"
 #include "QuickOptions.h"
@@ -1571,7 +1572,7 @@ String GameController::ElementResolve(int type, int ctype)
 String GameController::BasicParticleInfo(Particle const &sample_part)
 {
 	auto &sd = SimulationData::CRef();
-	return sd.BasicParticleInfo(sample_part);
+	return i18n::GlossCodes(sd.BasicParticleInfo(sample_part));
 }
 
 void GameController::ReloadSim()
@@ -1598,7 +1599,7 @@ String GameController::WallName(int type)
 {
 	auto &sd = SimulationData::CRef();
 	if(type >= 0 && type < UI_WALLCOUNT)
-		return sd.wtypes[type].name;
+		return i18n::Tr(sd.wtypes[type].name);
 	else
 		return String();
 }

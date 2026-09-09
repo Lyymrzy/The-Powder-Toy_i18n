@@ -203,7 +203,7 @@ void SaveButton::Draw(const Point& screenPos)
 		g->BlendImage(tex->Data(), 255, RectSized(screenPos + ((save && save->id) ? ((space - thumbBoxSize) / 2 - Vec2{ 3, 0 }) : (space - thumbSize) / 2), tex->Size()));
 	}
 	else if (file && !file->LazyGetGameSave())
-		g->BlendText(screenPos + Vec2{ (Size.X-(Graphics::TextSize("Error loading save").X - 1))/2, (Size.Y-28)/2 }, "Error loading save", 0xB4B4B4_rgb .WithAlpha(255));
+		g->BlendText(screenPos + Vec2{ (Size.X-(Graphics::TextSize("无法载入存档").X - 1))/2, (Size.Y-28)/2 }, "无法载入存档", 0xB4B4B4_rgb .WithAlpha(255));
 	if(save)
 	{
 		if(save->id)
@@ -279,7 +279,7 @@ void SaveButton::OnMouseClick(int x, int y, unsigned int button)
 
 	if (file && !file->LazyGetGameSave())
 	{
-		new ErrorMessage("Error loading save", file->GetError());
+		new ErrorMessage("载入存档出错", file->GetError());
 		return;
 	}
 
@@ -306,12 +306,12 @@ void SaveButton::AddContextMenu(int menuType)
 		menu->AddItem(ContextMenuItem("View History", 2, true));
 		menu->AddItem(ContextMenuItem("More by this user", 3, true));
 	}
-	else if (menuType == 1) //Local save browser
+	else if (menuType == 1) //本地存档浏览器
 	{
 		menu = new ContextMenu(this);
-		menu->AddItem(ContextMenuItem("Open", 0, true));
-		menu->AddItem(ContextMenuItem("Rename", 2, true));
-		menu->AddItem(ContextMenuItem("Delete", 3, true));
+		menu->AddItem(ContextMenuItem("打开", 0, true));
+		menu->AddItem(ContextMenuItem("重命名", 2, true));
+		menu->AddItem(ContextMenuItem("删除", 3, true));
 	}
 }
 

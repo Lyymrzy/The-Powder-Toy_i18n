@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "i18n.h"
 #include "GameModel.h"
 #include "BitmapBrush.h"
 #include "EllipseBrush.h"
@@ -1780,6 +1781,7 @@ void GameModel::DeselectTool(ByteString identifier)
 
 void GameModel::AllocTool(std::unique_ptr<Tool> tool)
 {
+	tool->Description = i18n::Tr(tool->Description);
 	std::optional<int> index;
 	for (int i = 0; i < int(tools.size()); ++i)
 	{
@@ -1840,7 +1842,7 @@ void GameModel::UpdateElementTool(int element)
 	auto &elem = elements[element];
 	auto *tool = GetToolFromIdentifier(elem.Identifier);
 	tool->Name = elem.Name;
-	tool->Description = elem.Description;
+	tool->Description = i18n::Tr(elem.Description);
 	tool->Colour = elem.Colour;
 	tool->textureGen = elem.IconGenerator;
 	tool->MenuSection = elem.MenuSection;
@@ -1929,7 +1931,7 @@ void GameModel::BuildMenus()
 	menuList.clear();
 	for (auto &section : sd.msections)
 	{
-		menuList.push_back(std::make_unique<Menu>(section.icon, section.name, section.doshow));
+		menuList.push_back(std::make_unique<Menu>(section.icon, i18n::Tr(section.name), section.doshow));
 	}
 
 	for (auto &tool : tools)

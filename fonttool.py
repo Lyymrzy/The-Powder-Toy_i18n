@@ -213,7 +213,7 @@ characters as any number of consecutive character description
 structures laid out as follows:
   * the code point corresponding to the character being described;
   * the width in pixels of the character being described;
-  * width times %i brightness levels between 0 and 3, a row-major matrix.""")
+* width times %%i brightness levels between 0 and 3, a row-major matrix.""")
 
     remove = command.add_parser("remove", help="Remove a range of characters")
     remove.add_argument("first", metavar="FIRST", type=int)

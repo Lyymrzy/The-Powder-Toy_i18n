@@ -141,9 +141,36 @@ Credits::Credits():
 	}
 
 
+	// 本 fork 新增:汉化版致谢
+	if (root["Localization"].isArray() && root["Localization"].size())
+	{
+		addHeader("致谢 (Acknowledgements)");
+		for (auto &item : root["Localization"])
+		{
+			ByteString realname = item["realname"].asString();
+			ByteString message = item["message"].asString();
+			if (!realname.empty())
+			{
+				auto *whoLabel = new ui::Label(ui::Point(0, 0), ui::Point(scrollPanel->Size.X, 16), realname.FromUtf8());
+				whoLabel->Appearance.HorizontalAlign = ui::Appearance::AlignCentre;
+				whoLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
+				organizeComponents(std::vector<ui::Component *>{ whoLabel }, scrollPanel->Size.X);
+			}
+			if (!message.empty())
+			{
+				auto *msgLabel = new ui::Label(ui::Point(0, 0), ui::Point(scrollPanel->Size.X - 8, 18), message.FromUtf8());
+				msgLabel->Appearance.HorizontalAlign = ui::Appearance::AlignCentre;
+				msgLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
+				msgLabel->SetTextColour(ui::Colour(200, 200, 200));
+				organizeComponents(std::vector<ui::Component *>{ msgLabel }, scrollPanel->Size.X);
+			}
+		}
+	}
+
+
 	scrollPanel->InnerSize = ui::Point(scrollPanel->Size.X, nextY);
 
-	auto *closeButton = new ui::Button({ 0, Size.Y - 12 }, { Size.X, 12 }, "Close");
+	auto *closeButton = new ui::Button({ 0, Size.Y - 12 }, { Size.X, 12 }, "关闭");
 	closeButton->SetActionCallback({
 	[this] {
 		CloseActiveWindow();

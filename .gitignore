@@ -11,6 +11,12 @@
 *~
 .DS_Store
 
+# i18n 汉化工程必入库(豁免宽泛 *.py/*.txt 规则)
+!resources/gen_translations.py
+!resources/cjkfont/import_cjk.py
+!resources/cjkfont/preview_cjk.py
+!resources/cjkfont/LICENSE-OFL.txt
+
 # Build files
 build*/*
 *.o
