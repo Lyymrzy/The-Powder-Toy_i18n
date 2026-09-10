@@ -268,20 +268,20 @@ void GameController::Install()
 {
 	if constexpr (CAN_INSTALL)
 	{
-		new ConfirmPrompt("Install " + String(APPNAME), "Do you wish to install " + String(APPNAME) + " on this computer?\nThis allows you to open save files and saves directly from the website.", { [] {
+		new ConfirmPrompt("安装 " + String(APPNAME), "是否在本机安装 " + String(APPNAME) + "？\n这样可以让你直接从网站打开存档与存档文件。", { [] {
 			if (Platform::Install())
 			{
-				new InformationMessage("Success", "Installation completed", false);
+				new InformationMessage("成功", "安装完成", false);
 			}
 			else
 			{
-				new ErrorMessage("Could not install", "The installation did not complete due to an error");
+				new ErrorMessage("无法安装", "安装因错误未能完成");
 			}
 		} });
 	}
 	else
 	{
-		new InformationMessage("No installation necessary", "You don't need to install " + String(APPNAME) + " on this platform", false);
+		new InformationMessage("无需安装", "在此平台上无需安装 " + String(APPNAME), false);
 	}
 }
 
@@ -1292,7 +1292,7 @@ void GameController::OpenLocalSaveWindow(bool asCurrent)
 			else if (!Platform::WriteFile(saveData, gameModel->GetSaveFile()->GetName()))
 				new ErrorMessage("Error", "Unable to write save file.");
 			else
-				gameModel->SetInfoTip("Saved Successfully");
+				gameModel->SetInfoTip("保存成功");
 		}
 	}
 }

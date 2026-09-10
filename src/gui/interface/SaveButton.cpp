@@ -297,14 +297,14 @@ void SaveButton::OnMouseClick(int x, int y, unsigned int button)
 
 void SaveButton::AddContextMenu(int menuType)
 {
-	if (menuType == 0) //Save browser
+	if (menuType == 0) //在线存档浏览器
 	{
 		menu = new ContextMenu(this);
-		menu->AddItem(ContextMenuItem("Open", 0, true));
+		menu->AddItem(ContextMenuItem("打开", 0, true));
 		if (Client::Ref().GetAuthUser())
-			menu->AddItem(ContextMenuItem("Select", 1, true));
-		menu->AddItem(ContextMenuItem("View History", 2, true));
-		menu->AddItem(ContextMenuItem("More by this user", 3, true));
+			menu->AddItem(ContextMenuItem("选择", 1, true));
+		menu->AddItem(ContextMenuItem("查看历史", 2, true));
+		menu->AddItem(ContextMenuItem("该用户的其他作品", 3, true));
 	}
 	else if (menuType == 1) //本地存档浏览器
 	{
@@ -406,9 +406,9 @@ void SaveButton::DoSelection()
 	if(menu)
 	{
 		if(selected)
-			menu->SetItem(1, "Deselect");
+			menu->SetItem(1, "取消选择");
 		else
-			menu->SetItem(1, "Select");
+			menu->SetItem(1, "选择");
 	}
 	if (selectable && actionCallback.selected)
 		actionCallback.selected();

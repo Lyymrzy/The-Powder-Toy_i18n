@@ -11,7 +11,7 @@ class SignTool: public Tool
 
 public:
 	SignTool(GameModel &model):
-		Tool(0, "SIGN", "Sign. Displays text. Click on a sign to edit it or anywhere else to place a new one.",
+		Tool(0, "SIGN", "标记。用于显示文字。点击已有标记可编辑它，点击其它位置可放置新标记。",
 			0x000000_rgb, "DEFAULT_UI_SIGN", SignTool::GetIcon
 		),
 		gameModel(model)

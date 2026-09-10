@@ -27,7 +27,7 @@
 #include <set>
 
 Client::Client():
-	messageOfTheDay("The message of the day and notifications have not yet been fetched, you can enable this in Settings"),
+	messageOfTheDay("尚未获取每日消息与通知，你可以在「设置」中开启"),
 	usingAltUpdateServer(false),
 	updateAvailable(false)
 {
@@ -112,7 +112,7 @@ void Client::BeginStartupRequest()
 	serverNotifications.clear();
 	startupRequestError.reset();
 	startupRequestStatus = StartupRequestStatus::inProgress;
-	messageOfTheDay = "Fetching the message of the day...";
+	messageOfTheDay = "正在获取每日消息...";
 	versionCheckRequest = std::make_unique<http::StartupRequest>(false);
 	versionCheckRequest->Start();
 	if constexpr (USE_UPDATESERVER)
@@ -131,7 +131,7 @@ void Client::Tick()
 	{
 		if (versionCheckRequest->StatusCode() == 618)
 		{
-			AddServerNotification({ "Failed to load SSL certificates", ByteString::Build(SERVER, "/FAQ.html") });
+			AddServerNotification({ "加载 SSL 证书失败", ByteString::Build(SERVER, "/FAQ.html") });
 		}
 		try
 		{
@@ -156,7 +156,7 @@ void Client::Tick()
 			if (!usingAltUpdateServer)
 			{
 				startupRequestError = ex.what();
-				SetMessageOfTheDay(ByteString::Build("Error while fetching MotD: ", ex.what()).FromUtf8());
+				SetMessageOfTheDay(ByteString::Build("获取每日消息出错：", ex.what()).FromUtf8());
 			}
 		}
 		versionCheckRequest.reset();

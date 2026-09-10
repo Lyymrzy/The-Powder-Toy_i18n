@@ -3,6 +3,7 @@
 #include "common/tpt-rand.h"
 #include "Config.h"
 #include <memory>
+#include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -13,6 +14,21 @@ namespace Platform
 
 std::string originalCwd;
 std::string sharedCwd;
+
+// 以二进制方式打开文件。Windows 上将 UTF-8 路径转为宽字符路径，
+// 使中文等非 ASCII 文件名可以正常读写（窄路径会走 ANSI 代码页而失败）。
+namespace
+{
+	FILE *OpenFileUTF8(ByteString filename, const char *mode)
+	{
+#ifdef _WIN32
+		std::wstring wmode(mode, mode + std::strlen(mode));
+		return _wfopen(WinWiden(filename).c_str(), wmode.c_str());
+#else
+		return std::fopen(filename.c_str(), mode);
+#endif
+	}
+}
 
 // Returns a list of all files in a directory matching a search
 // search - list of search terms. extensions - list of extensions to also match
@@ -54,12 +70,24 @@ std::vector<ByteString> DirectorySearch(ByteString directory, ByteString search,
 
 bool ReadFile(std::vector<char> &fileData, ByteString filename)
 {
-	std::ifstream f(filename, std::ios::binary);
-	if (f) f.seekg(0, std::ios::end);
-	if (f) fileData.resize(f.tellg());
-	if (f) f.seekg(0);
-	if (f && fileData.size()) f.read(fileData.data(), fileData.size());
+	FILE *f = OpenFileUTF8(filename, "rb");
 	if (!f)
+	{
+		std::cerr << "ReadFile: " << filename << ": " << strerror(errno) << std::endl;
+		return false;
+	}
+	bool ok = std::fseek(f, 0, SEEK_END) == 0;
+	long size = ok ? std::ftell(f) : -1;
+	ok = ok && size >= 0;
+	if (ok)
+	{
+		std::fseek(f, 0, SEEK_SET);
+		fileData.resize(std::size_t(size));
+		if (size > 0 && std::fread(fileData.data(), 1, fileData.size(), f) != fileData.size())
+			ok = false;
+	}
+	std::fclose(f);
+	if (!ok)
 	{
 		std::cerr << "ReadFile: " << filename << ": " << strerror(errno) << std::endl;
 		return false;
@@ -84,9 +112,12 @@ bool WriteFile(std::span<const char> fileData, ByteString filename)
 	}
 	bool ok = false;
 	{
-		std::ofstream f(writeFileName, std::ios::binary);
-		if (f) f.write(fileData.data(), fileData.size());
-		ok = bool(f);
+		FILE *f = OpenFileUTF8(writeFileName, "wb");
+		if (f)
+		{
+			ok = fileData.empty() || std::fwrite(fileData.data(), 1, fileData.size(), f) == fileData.size();
+			std::fclose(f);
+		}
 	}
 	if (!ok)
 	{

@@ -36,7 +36,7 @@ LocalBrowserView::LocalBrowserView():
 	pageTextbox->SetInputType(ui::Textbox::Number);
 	pageLabel = new ui::Label(ui::Point(0, WINDOWH-18), ui::Point(30, 16), "第"); //第 [TEXTBOX] 页 / 共 N 页
 	pageLabel->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
-	pageCountLabel = new ui::Label(ui::Point(WINDOWW/2+6, WINDOWH-18), ui::Point(50, 16), "");
+	pageCountLabel = new ui::Label(ui::Point(WINDOWW/2+6, WINDOWH-18), ui::Point(160, 16), "");
 	pageCountLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	AddComponent(pageLabel);
 	AddComponent(pageCountLabel);
@@ -104,6 +104,10 @@ void LocalBrowserView::NotifyPageChanged(LocalBrowserModel * sender)
 		String pageInfo = String::Build("/ ", pageCount, " 页");
 		pageCountLabel->SetText(pageInfo);
 		int width = Graphics::TextSize(pageInfo).X - 1;
+
+		// 标签宽度随内容自适应(设上限,避免覆盖右侧元素;Label 会按自身宽度裁剪文本)
+		int labelWidth = width + 8;
+		pageCountLabel->Size.X = labelWidth > 200 ? 200 : labelWidth;
 
 		pageLabel->Position.X = WINDOWW/2-width-20;
 		pageTextbox->Position.X = WINDOWW/2-width+11;

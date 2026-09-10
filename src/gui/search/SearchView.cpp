@@ -30,23 +30,23 @@ SearchView::SearchView():
 
 	Client::Ref().AddListener(this);
 
-	nextButton = new ui::Button(ui::Point(WINDOWW-52, WINDOWH-18), ui::Point(50, 16), String("Next ") + 0xE015);
-	previousButton = new ui::Button(ui::Point(2, WINDOWH-18), ui::Point(50, 16), 0xE016 + String(" Prev"));
-	tagsLabel  = new ui::Label(ui::Point(270, WINDOWH-18), ui::Point(WINDOWW-540, 16), "\boPopular Tags:");
+	nextButton = new ui::Button(ui::Point(WINDOWW-52, WINDOWH-18), ui::Point(50, 16), String("下页 ") + 0xE015);
+	previousButton = new ui::Button(ui::Point(2, WINDOWH-18), ui::Point(50, 16), 0xE016 + String(" 上页"));
+	tagsLabel  = new ui::Label(ui::Point(270, WINDOWH-18), ui::Point(WINDOWW-540, 16), "\bo热门标签：");
 	motdLabel  = new ui::RichLabel(ui::Point(51, WINDOWH-18), ui::Point(WINDOWW-102, 16), Client::Ref().GetMessageOfTheDay());
 
 	pageTextbox = new ui::Textbox(ui::Point(283, WINDOWH-18), ui::Point(41, 16), "");
 	pageTextbox->SetActionCallback({ [this] { textChanged(); } });
 	pageTextbox->SetInputType(ui::Textbox::Number);
-	pageLabel = new ui::Label(ui::Point(0, WINDOWH-18), ui::Point(30, 16), "Page"); //page [TEXTBOX] of y
+	pageLabel = new ui::Label(ui::Point(0, WINDOWH-18), ui::Point(30, 16), "第"); //第 [TEXTBOX] / 共 N 页
 	pageLabel->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
-	pageCountLabel = new ui::Label(ui::Point(WINDOWW/2+6, WINDOWH-18), ui::Point(50, 16), "");
+	pageCountLabel = new ui::Label(ui::Point(WINDOWW/2+6, WINDOWH-18), ui::Point(160, 16), "");
 	pageCountLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	AddComponent(pageLabel);
 	AddComponent(pageCountLabel);
 	AddComponent(pageTextbox);
 
-	searchField = new ui::Textbox(ui::Point(60, 10), ui::Point(WINDOWW-283, 17), "", "[search, F1 for help]");
+	searchField = new ui::Textbox(ui::Point(60, 10), ui::Point(WINDOWW-283, 17), "", "[搜索，按 F1 查看帮助]");
 	searchField->Appearance.icon = IconSearch;
 	searchField->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	searchField->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
@@ -56,16 +56,16 @@ SearchView::SearchView():
 
 	dateRange = new ui::DropDown(ui::Point(WINDOWW-185, 10), ui::Point(36, 17));
 	dateRange->SetActionCallback({ [this] { c->ChangePeriod(dateRange->GetOption().second); } });
-	dateRange->AddOption({"All", 0});
-	dateRange->AddOption({"Day", 1});
-	dateRange->AddOption({"Week", 2});
-	dateRange->AddOption({"Month", 3});
-	dateRange->AddOption({"Year", 4});
+	dateRange->AddOption({"全部", 0});
+	dateRange->AddOption({"一天", 1});
+	dateRange->AddOption({"一周", 2});
+	dateRange->AddOption({"一月", 3});
+	dateRange->AddOption({"一年", 4});
 	dateRange->Appearance.HorizontalAlign = ui::Appearance::AlignCentre;
 	dateRange->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(dateRange);
 
-	sortButton = new ui::Button(ui::Point(WINDOWW-140, 10), ui::Point(61, 17), "Sort");
+	sortButton = new ui::Button(ui::Point(WINDOWW-140, 10), ui::Point(61, 17), "排序");
 	sortButton->SetIcon(IconVoteSort);
 	sortButton->SetTogglable(true);
 	sortButton->SetActionCallback({ [this] { c->ChangeSort(); } });
@@ -73,7 +73,7 @@ SearchView::SearchView():
 	sortButton->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(sortButton);
 
-	ownButton = new ui::Button(ui::Point(WINDOWW-70, 10), ui::Point(61, 17), "My Own");
+	ownButton = new ui::Button(ui::Point(WINDOWW-70, 10), ui::Point(61, 17), "我的");
 	ownButton->SetIcon(IconMyOwn);
 	ownButton->SetTogglable(true);
 	ownButton->SetActionCallback({ [this] { c->ShowOwn(ownButton->GetToggleState()); } });
@@ -116,27 +116,27 @@ SearchView::SearchView():
 	loadingSpinner = new ui::Spinner(ui::Point((WINDOWW/2)-12, (WINDOWH/2)+12), ui::Point(24, 24));
 	AddComponent(loadingSpinner);
 
-	ui::Label * searchPrompt = new ui::Label(ui::Point(10, 10), ui::Point(50, 16), "Search:");
+	ui::Label * searchPrompt = new ui::Label(ui::Point(10, 10), ui::Point(50, 16), "搜索：");
 	searchPrompt->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	searchPrompt->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(searchPrompt);
 
-	removeSelected = new ui::Button(ui::Point(((WINDOWW-415)/2), WINDOWH-18), ui::Point(100, 16), "Delete");
+	removeSelected = new ui::Button(ui::Point(((WINDOWW-415)/2), WINDOWH-18), ui::Point(100, 16), "删除");
 	removeSelected->Visible = false;
 	removeSelected->SetActionCallback({ [this] { c->RemoveSelected(); } });
 	AddComponent(removeSelected);
 
-	unpublishSelected = new ui::Button(ui::Point(((WINDOWW-415)/2)+105, WINDOWH-18), ui::Point(100, 16), "Unpublish");
+	unpublishSelected = new ui::Button(ui::Point(((WINDOWW-415)/2)+105, WINDOWH-18), ui::Point(100, 16), "取消发布");
 	unpublishSelected->Visible = false;
 	unpublishSelected->SetActionCallback({ [this] { c->UnpublishSelected(publishButtonShown); } });
 	AddComponent(unpublishSelected);
 
-	favouriteSelected = new ui::Button(ui::Point(((WINDOWW-415)/2)+210, WINDOWH-18), ui::Point(100, 16), "Favourite");
+	favouriteSelected = new ui::Button(ui::Point(((WINDOWW-415)/2)+210, WINDOWH-18), ui::Point(100, 16), "收藏");
 	favouriteSelected->Visible = false;
 	favouriteSelected->SetActionCallback({ [this] { c->FavouriteSelected(); } });
 	AddComponent(favouriteSelected);
 
-	clearSelection = new ui::Button(ui::Point(((WINDOWW-415)/2)+315, WINDOWH-18), ui::Point(100, 16), "Clear selection");
+	clearSelection = new ui::Button(ui::Point(((WINDOWW-415)/2)+315, WINDOWH-18), ui::Point(100, 16), "清除选择");
 	clearSelection->Visible = false;
 	clearSelection->SetActionCallback({ [this] { c->ClearSelection(); } });
 	AddComponent(clearSelection);
@@ -169,33 +169,33 @@ void SearchView::doSearch()
 void SearchView::searchHelp()
 {
 	String info =
-		"Type in the search bar to begin automatically searching save titles and tags. Search terms are ORed together.\n"
+		"在搜索栏输入内容，即可自动搜索存档标题与标签。多个搜索词之间是「或（OR）」关系。\n"
 		"\n"
-		"Sorting: click the \bt\"By Votes\"\bw / \bt\"By Date\"\bw buttons to change the order saves are displayed in\n"
-		"Categories: If you're logged in, use \bt\"My Own\"\bw to view only your own saves, or click the Star icon to view your favorited saves\n"
-		"Date Range: Click the dropdown to the right of the search box to select the date range for your search\n"
+		"排序：点击 \bt「按票数」\bw / \bt「按日期」\bw 按钮可更改存档的排列顺序\n"
+		"分类：登录后可用 \bt「我的」\bw 只查看自己的存档，或点击星形图标查看已收藏的存档\n"
+		"时间范围：点击搜索框右侧的下拉框，选择本次搜索的时间范围\n"
 		"\n"
-		"Special search terms:\n"
-		"\btid:#######\bw - search by save id\n"
-		"\bthistory:#######\bw - see previous versions for a save id\n"
-		"\btuser:XXXXXX\bw - search for saves by a specific user\n"
-		"\btbefore:YYYY-MM-DD\bw - all saves originally created before a certain date. Month and Day portions are both optional\n"
-		"\btafter:YYYY-MM-DD\bw - all saves originally created after a certain date. Month and Day portions are both optional\n"
+		"特殊搜索词：\n"
+		"\btid:#######\bw - 按存档 ID 搜索\n"
+		"\bthistory:#######\bw - 查看某个存档 ID 的历史版本\n"
+		"\btuser:XXXXXX\bw - 搜索指定用户的存档\n"
+		"\btbefore:YYYY-MM-DD\bw - 某日期之前创建的存档。月份与日期部分都可省略\n"
+		"\btafter:YYYY-MM-DD\bw - 某日期之后创建的存档。月份与日期部分都可省略\n"
 		"\n"
-		"Advanced search:\n"
-		"Start a search with \bt~\bw to do an advanced search. This search works across save titles, descriptions, usernames, and tags, rather than only save titles and tags."
-		" It also concatenates search terms with AND instead of OR.\n"
-		"Use \bt|\bw to OR together search terms, for example \bg~bomb | nuke | explosive\bw\n"
-		"Use \bt!\bw to negate terms, for example \bg~city !destroyable !desert\bw\n"
-		"Use \bt\"\bw to create multi-word search terms, for example \bg~\"power plant\" uran | plut | polo\bw\n"
-		"Use \bt@title\bw to limit search to only save titles, for example \bg~@title subframe\bw\n"
-		"Use \bt@description\bw to limit search to only save descriptions, for example \bg~@description \"No description provided\"\bw\n"
-		"Use \bt@user\bw to limit search to only specific users, for example \bg~@user 117n00b | Catelite | Fluttershy @title laser\bw\n"
-		"Use \bt@tags\bw to limit search to just save tags, for example \bg~@tags resistcup @title printer | @description spider before:2024-06\bw\n"
-		"Parenthesis can be used to further complicate your searches. For example: \bg~(@user MG99 @description complete) | (@user goglesq @tags tutorial)\bw"
+		"高级搜索：\n"
+		"以 \bt~\bw 开头即可进行高级搜索。这种搜索会同时匹配存档标题、描述、用户名与标签，而不只限于标题与标签。"
+		" 它还会把搜索词之间按「与（AND）」处理，而不是「或」。\n"
+		"用 \bt|\bw 表示「或」，例如 \bg~bomb | nuke | explosive\bw\n"
+		"用 \bt!\bw 排除词，例如 \bg~city !destroyable !desert\bw\n"
+		"用 \bt\"\bw 创建多词短语，例如 \bg~\"power plant\" uran | plut | polo\bw\n"
+		"用 \bt@title\bw 只搜索标题，例如 \bg~@title subframe\bw\n"
+		"用 \bt@description\bw 只搜索描述，例如 \bg~@description \"No description provided\"\bw\n"
+		"用 \bt@user\bw 只搜索特定用户，例如 \bg~@user 117n00b | Catelite | Fluttershy @title laser\bw\n"
+		"用 \bt@tags\bw 只搜索标签，例如 \bg~@tags resistcup @title printer | @description spider before:2024-06\bw\n"
+		"还可以用括号组合出更复杂的搜索，例如：\bg~(@user MG99 @description complete) | (@user goglesq @tags tutorial)\bw"
 		;
 
-	new InformationMessage("Search Help", info, true);
+	new InformationMessage("搜索帮助", info, true);
 }
 
 void SearchView::clearSearch()
@@ -258,13 +258,13 @@ void SearchView::NotifySortChanged(SearchModel * sender)
 	if(sender->GetSort() == http::sortByVotes)
 	{
 		sortButton->SetToggleState(false);
-		sortButton->SetText("By votes");
+		sortButton->SetText("按票数");
 		sortButton->SetIcon(IconVoteSort);
 	}
 	else
 	{
 		sortButton->SetToggleState(true);
-		sortButton->SetText("By date");
+		sortButton->SetText("按日期");
 		sortButton->SetIcon(IconDateSort);
 	}
 }
@@ -315,9 +315,13 @@ void SearchView::NotifyPageChanged(SearchModel * sender)
 	}
 	else
 	{
-		String pageInfo = String::Build("of ", pageCount);
+		String pageInfo = String::Build("/ ", pageCount, " 页");
 		pageCountLabel->SetText(pageInfo);
 		int width = Graphics::TextSize(pageInfo).X - 1;
+
+		// 标签宽度随内容自适应(设上限,避免覆盖右侧元素;Label 会按自身宽度裁剪文本)
+		int labelWidth = width + 8;
+		pageCountLabel->Size.X = labelWidth > 200 ? 200 : labelWidth;
 
 		pageLabel->Position.X = WINDOWW/2-width-20;
 		pageTextbox->Position.X = WINDOWW/2-width+11;
@@ -507,9 +511,9 @@ void SearchView::NotifySaveListChanged(SearchModel * sender)
 	//string messageOfTheDay = sender->GetMessageOfTheDay();
 
 	if(sender->GetShowFavourite())
-		favouriteSelected->SetText("Unfavourite");
+		favouriteSelected->SetText("取消收藏");
 	else
-		favouriteSelected->SetText("Favourite");
+		favouriteSelected->SetText("收藏");
 
 	auto user = Client::Ref().GetAuthUser();
 	for (size_t i = 0; i < saveButtons.size(); i++)
@@ -545,12 +549,12 @@ void SearchView::NotifySaveListChanged(SearchModel * sender)
 		loadingSpinner->Visible = false;
 		if (!errorLabel)
 		{
-			errorLabel = new ui::Label(ui::Point(0, (WINDOWH/2)-6), ui::Point(WINDOWW, 12), "Error");
+			errorLabel = new ui::Label(ui::Point(0, (WINDOWH/2)-6), ui::Point(WINDOWW, 12), "错误");
 			AddComponent(errorLabel);
 		}
 		if (!sender->GetSavesLoaded())
 		{
-			errorLabel->SetText("Loading...");
+			errorLabel->SetText("正在载入...");
 			loadingSpinner->Visible = true;
 		}
 		else
@@ -558,7 +562,7 @@ void SearchView::NotifySaveListChanged(SearchModel * sender)
 			if(sender->GetLastError().length())
 				errorLabel->SetText("\bo" + sender->GetLastError());
 			else
-				errorLabel->SetText("\boNo saves found");
+				errorLabel->SetText("\bo没有找到存档");
 		}
 	}
 	else
@@ -655,12 +659,12 @@ void SearchView::NotifySelectedChanged(SearchModel * sender)
 		pageCountLabel->Visible = false;
 		if (published <= selected.size()/2)
 		{
-			unpublishSelected->SetText("Publish");
+			unpublishSelected->SetText("发布");
 			publishButtonShown = true;
 		}
 		else
 		{
-			unpublishSelected->SetText("Unpublish");
+			unpublishSelected->SetText("取消发布");
 			publishButtonShown = false;
 		}
 	}

@@ -9,6 +9,54 @@
 
 namespace ui
 {
+	namespace
+	{
+		// CJK 等不用空格分隔的语言,字符之间允许换行(否则整句会被当成一个“词”)
+		bool MayBreakAfter(String::value_type ch)
+		{
+			return (ch >= 0x2E80 && ch <= 0x303F)   // CJK 部首、符号、标点
+				|| (ch >= 0x3040 && ch <= 0x9FFF)    // 假名、韩文字母、CJK 表意文字
+				|| (ch >= 0xAC00 && ch <= 0xD7AF)    // 韩文音节
+				|| (ch >= 0xF900 && ch <= 0xFAFF)    // CJK 兼容表意文字
+				|| (ch >= 0xFE30 && ch <= 0xFE4F)    // CJK 兼容符号
+				|| (ch >= 0xFF00 && ch <= 0xFF60)    // 全角字符
+				|| (ch >= 0xFFE0 && ch <= 0xFFE6)    // 全角符号
+				|| (ch >= 0x20000 && ch <= 0x2FA1F); // CJK 扩展 B 及以上
+		}
+
+		// 不能出现在行首的字符(避头):收尾标点与右括号应紧跟前面的文字
+		bool NoBreakBefore(String::value_type ch)
+		{
+			switch (ch)
+			{
+			case 0x3001: case 0x3002:                          // 、。
+			case 0xFF0C: case 0xFF0E:                          // ，．
+			case 0xFF01: case 0xFF1F: case 0xFF1A: case 0xFF1B: // ！？：；
+			case 0x300D: case 0x300F: case 0x3011: case 0x3015: // 」』】〕
+			case 0xFF09: case 0xFF3D: case 0xFF5D:              // ）］｝
+			case 0x3009: case 0x300B:                           // 》〉
+			case 0x2026:                                        // …
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		// 不能出现在行末的字符(避尾):左括号不应与后面的内容分开
+		bool NoBreakAfter(String::value_type ch)
+		{
+			switch (ch)
+			{
+			case 0x300C: case 0x300E: case 0x3010: case 0x3014: // 「『【〔
+			case 0xFF08: case 0xFF3B: case 0xFF5B:              // （［｛
+			case 0x3008: case 0x300A:                           // 《〈
+				return true;
+			default:
+				return false;
+			}
+		}
+	}
+
 	int TextWrapper::Update(String const &text, bool do_wrapping, int max_width)
 	{
 		raw_text_size = (int)text.size();
@@ -187,6 +235,12 @@ namespace ui
 					case '-':
 					case '!':
 						word_begins_at = -1; // reset word state
+						break;
+					default:
+						// CJK 文本没有空格,允许在汉字之间换行,但要遵循基本的避头尾规则
+						if (MayBreakAfter(*it) && !NoBreakAfter(*it)
+								&& !(it + 1 != text.end() && NoBreakBefore(*(it + 1))))
+							word_begins_at = -1;
 						break;
 					}
 				}
