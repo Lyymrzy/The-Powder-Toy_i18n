@@ -1,6 +1,6 @@
 import bz2, re, os, sys
 
-root = r'd:\G_GitHub_Repo\The-Powder-Toy_i18n'
+root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 d = bz2.decompress(open(os.path.join(root, 'resources', 'font.bz2'), 'rb').read())
 w = {}
 i = 0
@@ -10,9 +10,12 @@ while i < len(d):
     i += 4 + 3 * d[i+3]
 
 def textw(s):
-    s = re.sub(r'\\[a-zA-Z]', '', s)   # strip colour codes like \bg
-    s = s.replace('\\n', '')
-    return sum(w.get(ord(c), 8) for c in s)
+    # 多行标签(源码里含 \n)按“最宽的一行”计算,而不是整串求和
+    best = 0
+    for part in s.split('\\n'):
+        part = re.sub(r'\\[a-zA-Z]', '', part)   # 去掉 \bg 这类色码(零宽)
+        best = max(best, sum(w.get(ord(c), 8) for c in part))
+    return best
 
 files = []
 for dp, dn, fn in os.walk(os.path.join(root, 'src', 'gui')):
