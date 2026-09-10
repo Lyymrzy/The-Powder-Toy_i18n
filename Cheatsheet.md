@@ -81,9 +81,60 @@ python resources\i18n-tools\audit_label_clip.py
 - **在线存档名限制为 ASCII**:`ServerSaveActivity::Save()` 会拒绝非 ASCII 名称(与官方服务器一致)。
 - 汉化文本尽量写成"一句话一段",换行由 `TextWrapper` 处理(已支持 CJK 逐字断行 + 避头尾)。
 
-## 5. 字体(可选操作)
+## 5. 字体(CJK 字形)
 
-- `resources/font.bz2` 里已注入 Fusion Pixel 12px 的 CJK 字形约 1.9 万个(原始字库备份:`resources/font.bz2.bak`)
-- 追加字形:`python fonttool.py addbdf <起始码位> <结束码位> <BDF文件> 0 -2`
+- `resources/font.bz2` 已注入 Fusion Pixel 12px 的 CJK 字形约 1.9 万个(原始拉丁字库备份:`resources/font.bz2.bak`)
+- 追加字形(手动):`python fonttool.py addbdf <起始码位> <结束码位> <BDF文件> 0 -2`
   (`fonttool.py` 需要十进制码位;`-2` 是 y 偏移,否则汉字底部两行会被裁掉)
-- 复现/预览脚本与 OFL 许可证在 `resources/cjkfont/`
+
+**一键复现(合并上游后如需重新注入,就用这个)**:
+
+```powershell
+# 1) 取得字体源文件 Fusion Pixel Font 12px monospaced zh_hans BDF
+#    项目:https://github.com/TakWolf/fusion-pixel-font (OFL-1.1)
+#    发布包内的文件名:fusion-pixel-12px-monospaced-zh_hans.bdf
+#    SHA256 应为:9CB8F307B8835FF071E62EAA2FD473FA0683D0AE2C5AF8583EB9C5A183953F00
+#    (脚本会自动校验,不匹配只会警告)
+
+# 2) 重新注入(脚本会先把 font.bz2 重置到 HEAD,再注入 3000-303F / 4E00-9FFF / FF00-FFEF)
+python resources\cjkfont\import_cjk.py <路径>\fusion-pixel-12px-monospaced-zh_hans.bdf
+```
+
+- 预览脚本与 OFL 许可证在 `resources/cjkfont/`(许可是分发要求,勿删)
+
+## 6. 同步上游更新
+
+本 fork 保留了上游完整历史,merge 即可:
+
+```powershell
+git remote add upstream https://github.com/The-Powder-Toy/The-Powder-Toy.git   # 只需一次
+git fetch upstream master --no-tags
+git switch -c sync/upstream-$(Get-Date -Format yyyyMM)
+git merge upstream/master            # 用 merge,不要 rebase
+```
+
+合并后固定动作:
+
+```powershell
+python resources\gen_translations.py      # translations.json 必须重生成
+python resources\cjkfont\import_cjk.py <BDF>   # 仅当 font.bz2 冲突(取上游版后重新注入)
+ninja -C build
+python resources\i18n-tools\audit_glossary.py
+python resources\i18n-tools\audit_translations.py
+```
+
+容易冲突的地方(保留我们这一侧的改动):
+
+| 文件 | 我们改了什么 |
+| --- | --- |
+| `resources/font.bz2` / `font.bz2.bak` | CJK 注入(二进制;已在 `.gitattributes` 标 `binary`) |
+| `resources/translations.json`、`glossary.json` | 翻译数据(冲突后重跑 `gen_translations.py` 即可) |
+| `src/common/String.h` | 字面量 → `String` 改走 UTF-8 解码 |
+| `src/gui/interface/TextWrapper.cpp` | CJK 按字换行 + 避头尾规则 |
+| `src/common/platform/Common.cpp` | `OpenFileUTF8()`:`_wfopen` 宽字符路径(中文文件名) |
+| `resources/meson.build`、`src/meson.build` | 内嵌 `translations_json`/`glossary_json` 与 `i18n.cpp` |
+| `src/gui/game/GameController.cpp`、`GameModel.cpp` | 翻译挂钩(`GlossCodes` / `AllocTool` 的 `Tr`);这两处上游也常改,最可能冲突 |
+| `src/gui/**` 各界面文件 | 内联中文(整行替换,冲突时人工合一下) |
+
+远端现状(2026-09-10 记录):仅 `origin`(本 fork)+ `upstream`(官方);本地 `master` 曾领先 `origin/master` 数个提交,
+合并前先 `git push` 备份。

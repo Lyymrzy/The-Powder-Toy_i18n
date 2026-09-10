@@ -1,2 +1,11 @@
 .gitattributes export-ignore
 .gitignore export-ignore
+
+# 字库是二进制文件:禁止文本 diff / 合并,合并上游时直接取一方再重新注入 CJK
+resources/font.bz2 binary
+resources/font.bz2.bak binary
+
+# 汉化数据文件:入库统一为 LF(工作区按 core.autocrlf 展开),避免跨平台换行差异
+resources/translations.json text
+resources/glossary.json text
+resources/credits.json text
