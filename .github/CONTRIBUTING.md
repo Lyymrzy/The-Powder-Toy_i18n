@@ -1,3 +1,5 @@
+[English](CONTRIBUTING.md) | [简体中文](CONTRIBUTING.zh.md)
+
 ## Contributing guidelines for The Powder Toy
 
 Thank you for your interest in contributing to TPT. Our GitHub repository is open to bug reports and contributions from community members, we just ask that you follow a few guidelines.

@@ -20,6 +20,9 @@ ninja -C build
   meson setup build -Dstatic=prebuilt --buildtype=release -Dwindows_utf8cp=false
   ```
   `-Dwindows_utf8cp=false` 是必需的:binutils 2.47 会因 gcc 默认清单与 `.rc` 内嵌清单冲突而报 multiple manifests
+- **日常就用仓库内 `build\` + 上面的默认配置**(也就是上面这条命令,俗称"测试构建"),速度快。
+  只有在做**分发(dist)构建**时才需要把构建目录放到仓库外(如 `meson setup D:\_out <repo> ...`),
+  目的是让产物不依赖附加 DLL、并剥离调试信息来瘦身;那属于发布前的单独步骤,不必每次做。
 
 ## 2. 翻译数据流(重要)
 

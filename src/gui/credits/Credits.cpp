@@ -76,6 +76,12 @@ Credits::Credits():
 		label->SetTextColour(style::Colour::InformationTitle);
 		label->Appearance.HorizontalAlign = ui::Appearance::AlignCentre;
 		label->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
+		// 标题可能是两行(中文化后尤其常见)。字体每行的墨迹其实跨越 12 像素再多上探 2 像素,
+		// 而 Label 绘制时会把裁剪区向内缩 1 像素;若标签高度刚好等于文字高度,
+		// 最后一行的底部像素就会被裁掉。这里按行数自适应并多留 2 像素余量,
+		// 同时保留原来的最小高度,以免改变单行标题的排版。
+		label->AutoHeight();
+		label->Size.Y = std::max(label->Size.Y + 2, 24);
 		scrollPanel->AddChild(label);
 		yPos += label->Size.Y + 8;
 	};

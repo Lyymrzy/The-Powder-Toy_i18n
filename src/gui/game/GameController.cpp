@@ -827,16 +827,16 @@ void GameController::SwitchGravity()
 	switch (gameModel->GetSimulation()->gravityMode)
 	{
 	case GRAV_VERTICAL:
-		gameModel->SetInfoTip("Gravity: Vertical");
+		gameModel->SetInfoTip("重力：竖直");
 		break;
 	case GRAV_OFF:
-		gameModel->SetInfoTip("Gravity: Off");
+		gameModel->SetInfoTip("重力：关闭");
 		break;
 	case GRAV_RADIAL:
-		gameModel->SetInfoTip("Gravity: Radial");
+		gameModel->SetInfoTip("重力：径向");
 		break;
 	case GRAV_CUSTOM:
-		gameModel->SetInfoTip("Gravity: Custom");
+		gameModel->SetInfoTip("重力：自定义");
 		break;
 	}
 }
@@ -848,19 +848,19 @@ void GameController::SwitchAir()
 	switch (gameModel->GetSimulation()->air->airMode)
 	{
 	case AIR_ON:
-		gameModel->SetInfoTip("Air: On");
+		gameModel->SetInfoTip("空气模拟：开启");
 		break;
 	case AIR_PRESSUREOFF:
-		gameModel->SetInfoTip("Air: Pressure Off");
+		gameModel->SetInfoTip("空气模拟：关闭压力");
 		break;
 	case AIR_VELOCITYOFF:
-		gameModel->SetInfoTip("Air: Velocity Off");
+		gameModel->SetInfoTip("空气模拟：关闭速度");
 		break;
 	case AIR_OFF:
-		gameModel->SetInfoTip("Air: Off");
+		gameModel->SetInfoTip("空气模拟：关闭");
 		break;
 	case AIR_NOUPDATE:
-		gameModel->SetInfoTip("Air: No Update");
+		gameModel->SetInfoTip("空气模拟：不更新");
 		break;
 	}
 }
@@ -889,7 +889,17 @@ void GameController::LoadRenderPreset(int presetNum)
 {
 	auto &settings = gameModel->GetRendererSettings();
 	RenderPreset preset = Renderer::renderModePresets[presetNum];
-	gameModel->SetInfoTip(preset.Name);
+	// 提示文字用中文名，索引与 Renderer::renderModePresets 一一对应；
+	// 不在表内时回退到原始名称，避免越界或漏译。
+	static const std::vector<String> presetNames = {
+		"备选速度显示", "速度显示", "压力显示", "持久轨迹显示", "火焰显示",
+		"点状（Blob）显示", "热量显示", "华丽显示", "基础显示", "热梯度显示",
+		"寿命显示", "动态热量显示", "涡度显示", "易碎性显示",
+	};
+	String presetName = preset.Name;
+	if (presetNum >= 0 && size_t(presetNum) < presetNames.size())
+		presetName = presetNames[presetNum];
+	gameModel->SetInfoTip(presetName);
 	settings.renderMode = preset.renderMode;
 	settings.displayMode = preset.displayMode;
 	settings.colorMode = preset.colorMode;
@@ -1098,13 +1108,13 @@ void GameController::SetEdgeMode(int edgeMode)
 	switch (edgeMode)
 	{
 		case EDGE_VOID:
-			gameModel->SetInfoTip("Edge Mode: Void");
+			gameModel->SetInfoTip("边界模式：虚空");
 			break;
 		case EDGE_SOLID:
-			gameModel->SetInfoTip("Edge Mode: Solid");
+			gameModel->SetInfoTip("边界模式：实体");
 			break;
 		case EDGE_LOOP:
-			gameModel->SetInfoTip("Edge Mode: Loop");
+			gameModel->SetInfoTip("边界模式：循环");
 			break;
 	}
 }

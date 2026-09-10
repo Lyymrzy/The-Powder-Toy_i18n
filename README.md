@@ -1,3 +1,5 @@
+[English](README.md) | [简体中文](README.zh.md)
+
 The Powder Toy - June 2026
 ==========================
 
